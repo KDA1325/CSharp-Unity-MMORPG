@@ -2,6 +2,14 @@
 {
     class Program
     {
+        enum ClassType
+        {
+            None = 0,
+            Knight = 1,
+            Archer = 2,
+            Mage = 3
+        }
+
         static void displayOption()
         {
             Console.WriteLine("직업을 선택하세요!");
@@ -10,31 +18,44 @@
             Console.WriteLine("[3] 법사");
         }
 
-        static void Main(string[] args)
+        static ClassType chooseClass()
         {
-            bool isPlaying = true;
+            ClassType choice = ClassType.None;
+
             int select = 0;
 
+            select = Convert.ToInt32(Console.ReadLine());
+
+            switch (select)
+            {
+                case 1:
+                    choice = ClassType.Knight;
+                    break;
+                case 2:
+                    choice = ClassType.Archer;
+                    break;
+                case 3:
+                    choice = ClassType.Mage;
+                    break;
+                default:
+                    displayOption();
+                    break;
+            }
+
+            return choice;
+        }
+
+        static void Main(string[] args)
+        {
             displayOption();
 
-            while (isPlaying)
+            while (true)
             {
-                select = Convert.ToInt32(Console.ReadLine());
+                ClassType choice = chooseClass();
 
-                switch (select)
+                if (choice != ClassType.None)
                 {
-                    case 1:
-                        isPlaying = false;
-                        break;
-                    case 2:
-                        isPlaying = false;
-                        break;
-                    case 3:
-                        isPlaying = false;
-                        break;
-                    default:
-                        displayOption();
-                        break;
+                    break;
                 }
             }
         }
