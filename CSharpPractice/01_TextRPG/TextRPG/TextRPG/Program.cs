@@ -120,21 +120,76 @@
             }
         }
 
-        static void EnterField()
+        static void Fight(ref Player player, ref Monster monster)
         {
-            Console.WriteLine("필드에 접속했습니다.");
+            // 이 안에서 그냥 player, monster 멤버 변수를 아무리 수정해도 Main 함수에 있는 원본 player, monster에는 영향을 주지 않음 
+            // -> 파라미터에 ref 키워드를 붙여서 원본을 직접 수정
+            while (true)
+            {
+                // 플레이어 공격
+                monster.hp -= player.attack;
 
-            Monster monster;
+                if(monster.hp <= 0)
+                {
+                    Console.WriteLine("승리했습니다!");
+                    Console.WriteLine($"남은 체력: {player.hp}");
+                    break;
+                }
 
-            // 랜덤으로 1-3 몬스터 중 하나를 리스폰 
-            CreateRandomMonster(out monster);
+                // 몬스터 반격
+                player.hp -= monster.attack;
 
-            Console.WriteLine("[1] 전투 모드로 돌입");
-            
-            Console.WriteLine("[2] 일정 확률로 마을로 도망");
+                if(player.hp <= 0)
+                {
+                    Console.WriteLine("패배했습니다!");
+                    break;
+                }
+            }
         }
 
-        static void EnterGame()
+        static void EnterField(ref Player player)
+        {
+            while(true)
+            {
+                Console.WriteLine("필드에 접속했습니다.");
+
+                Monster monster;
+
+                // 랜덤으로 1-3 몬스터 중 하나를 리스폰 
+                CreateRandomMonster(out monster);
+
+                Console.WriteLine("[1] 전투 모드로 돌입");
+                Console.WriteLine("[2] 일정 확률로 마을로 도망");
+
+                string input = Console.ReadLine();
+
+                if(input == "1")
+                {
+                    Fight(ref player, ref monster);
+                }
+                else if(input == "2")
+                {
+                    // 도망 확률 33%
+                    Random rand = new Random();
+
+                    // 0~100 사이의 랜덤 정수 생성
+                    int randVal = rand.Next(0, 101);
+
+                    // 33% 안에 들어옴
+                    if(randVal <= 33)
+                    {
+                        Console.WriteLine("도망치는 데 성공했습니다!");
+                        break;
+                    }
+                    else
+                    {
+                        Fight(ref player, ref monster);
+                    }
+                }
+            }
+        }
+
+        static void EnterGame(ref Player player)
         {
             while(true)
             {
@@ -147,7 +202,7 @@
                 switch (input)
                 {
                     case "1":
-                        EnterField();
+                        EnterField(ref player);
                         Console.WriteLine("필드로 이동합니다.");
                         break;
                     case "2":
@@ -155,15 +210,11 @@
                         return; 
                     default:
                         Console.WriteLine("잘못된 입력입니다. 다시 선택해주세요.");
-                        EnterGame();
+                        EnterGame(ref player);
                         break;
                 }
 
             }
-
-            //Console.WriteLine("필드에 입장했습니다.");
-            //Console.WriteLine("몬스터가 나타났습니다!");
-            //Console.WriteLine("전투를 시작합니다!");
         }
 
         static void Main(string[] args)
@@ -182,7 +233,7 @@
                     Console.WriteLine($"HP{player.hp} Attack{player.attack}");
 
                     // 필드로 가서 몬스터와 전투
-                    EnterGame();
+                    EnterGame(ref player);
                 }
             }
         }
